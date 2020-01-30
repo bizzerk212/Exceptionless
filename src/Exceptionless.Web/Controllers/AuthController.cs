@@ -26,6 +26,7 @@ using OAuth2.Client.Impl;
 using OAuth2.Configuration;
 using OAuth2.Infrastructure;
 using OAuth2.Models;
+using Exceptionless.Web.Security.OAuth;
 
 namespace Exceptionless.Web.Controllers {
     [Route(API_PREFIX + "/auth")]
@@ -327,6 +328,34 @@ namespace Exceptionless.Web.Controllers {
                 (f, c) => {
                     c.Scope = "wl.emails";
                     return new WindowsLiveClient(f, c);
+                }
+            );
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [AllowAnonymous]
+        [Consumes("application/json")]
+        [HttpPost("custom")]
+        public Task<ActionResult<TokenResult>> CustomAsync(JObject value) {
+
+            Uri accessCodeEndpoint = new Uri(_authOptions.Value.CustomAccessCodeEndpoint);
+            Uri accessTokenEndpoint = new Uri(_authOptions.Value.CustomAccessTokenEndpoint);
+            Uri userInfoEndpoint = new Uri(_authOptions.Value.CustomUserInfoEndpoint);
+
+
+            return ExternalLoginAsync(value.ToObject<ExternalAuthInfo>(),
+                _authOptions.Value.CustomId,
+                _authOptions.Value.CustomSecret,
+                (f, c) => {
+                    c.Scope = "profile email";
+                    return new CustomizableClient(
+                        f,
+                        c,
+                        _authOptions.Value.CustomName,
+                        accessCodeEndpoint.ToEndpoint(),
+                        accessTokenEndpoint.ToEndpoint(),
+                        userInfoEndpoint.ToEndpoint()
+                    );
                 }
             );
         }

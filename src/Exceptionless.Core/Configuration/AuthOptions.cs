@@ -25,6 +25,18 @@ namespace Exceptionless.Core.Configuration {
 
         public string GoogleSecret { get; internal set; }
 
+        public string CustomId { get; internal set; }
+
+        public string CustomSecret { get; internal set; }
+
+        public string CustomName { get; internal set; }
+
+        public string CustomAccessTokenEndpoint { get; internal set; }
+
+        public string CustomAccessCodeEndpoint { get; internal set; }
+
+        public string CustomUserInfoEndpoint { get; internal set; }
+
         public string LdapConnectionString { get; internal set; }
     }
 
@@ -50,6 +62,12 @@ namespace Exceptionless.Core.Configuration {
             options.FacebookSecret = oAuth.GetString(nameof(options.FacebookSecret));
             options.GitHubId = oAuth.GetString(nameof(options.GitHubId));
             options.GitHubSecret = oAuth.GetString(nameof(options.GitHubSecret));
+            options.CustomId = oAuth.GetString(nameof(options.CustomId));
+            options.CustomSecret = oAuth.GetString(nameof(options.CustomSecret));
+            options.CustomName = oAuth.GetString(nameof(options.CustomName));
+            options.CustomAccessTokenEndpoint = oAuth.GetString(nameof(options.CustomAccessTokenEndpoint));
+            options.CustomAccessCodeEndpoint = oAuth.GetString(nameof(options.CustomAccessCodeEndpoint));
+            options.CustomUserInfoEndpoint = oAuth.GetString(nameof(options.CustomUserInfoEndpoint));
         }
     }
 }
