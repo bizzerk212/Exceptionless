@@ -37,6 +37,8 @@ namespace Exceptionless.Core.Configuration {
 
         public string CustomUserInfoEndpoint { get; internal set; }
 
+        public string CustomScope { get; internal set; }
+
         public string LdapConnectionString { get; internal set; }
     }
 
@@ -52,6 +54,7 @@ namespace Exceptionless.Core.Configuration {
 
             options.LdapConnectionString = _configuration.GetConnectionString("LDAP");
             options.EnableActiveDirectoryAuth = _configuration.GetValue(nameof(options.EnableActiveDirectoryAuth), options.LdapConnectionString != null);
+            string customScopeDelimiter = _configuration.GetValue("CustomScopeDelimiter", " ");
 
             var oAuth = _configuration.GetConnectionString("OAuth").ParseConnectionString();
             options.GoogleId = oAuth.GetString(nameof(options.GoogleId));
@@ -68,6 +71,7 @@ namespace Exceptionless.Core.Configuration {
             options.CustomAccessTokenEndpoint = oAuth.GetString(nameof(options.CustomAccessTokenEndpoint));
             options.CustomAccessCodeEndpoint = oAuth.GetString(nameof(options.CustomAccessCodeEndpoint));
             options.CustomUserInfoEndpoint = oAuth.GetString(nameof(options.CustomUserInfoEndpoint));
+            options.CustomScope = oAuth.GetString(nameof(options.CustomScope)).SplitAndTrim(", ".ToCharArray()).ToDelimitedString(customScopeDelimiter);
         }
     }
 }

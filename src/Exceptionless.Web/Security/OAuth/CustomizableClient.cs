@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using OAuth2.Client;
@@ -54,10 +55,17 @@ namespace Exceptionless.Web.Security.OAuth {
             }
         }
 
+        protected override void BeforeGetUserInfo(BeforeAfterRequestArgs args) {
+            base.BeforeGetUserInfo(args);
+
+            args.Request.AddHeader("Authorization", "Bearer " + AccessToken);
+        }
+
         protected override UserInfo ParseUserInfo(string content) {
             var response = JObject.Parse(content);
             var avatarUri = response["picture"].SafeGet(x => x.Value<string>());
             const string avatarUriTemplate = "{0}?sz={1}";
+
             return new UserInfo {
                 Id = response["id"].Value<string>(),
                 Email = response["email"].SafeGet(x => x.Value<string>()),

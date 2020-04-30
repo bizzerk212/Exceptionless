@@ -342,12 +342,11 @@ namespace Exceptionless.Web.Controllers {
             Uri accessTokenEndpoint = new Uri(_authOptions.Value.CustomAccessTokenEndpoint);
             Uri userInfoEndpoint = new Uri(_authOptions.Value.CustomUserInfoEndpoint);
 
-
             return ExternalLoginAsync(value.ToObject<ExternalAuthInfo>(),
                 _authOptions.Value.CustomId,
                 _authOptions.Value.CustomSecret,
                 (f, c) => {
-                    c.Scope = "profile email";
+                    c.Scope = _authOptions.Value.CustomScope;
                     return new CustomizableClient(
                         f,
                         c,
@@ -621,6 +620,7 @@ namespace Exceptionless.Web.Controllers {
 
                 UserInfo userInfo;
                 try {
+                    Console.WriteLine("code: " + authInfo.Code);
                     userInfo = await client.GetUserInfoAsync(authInfo.Code, authInfo.RedirectUri);
                 } catch (Exception ex) {
                     _logger.LogCritical(ex, "External login failed: {Message}", ex.Message);
